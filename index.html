@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Telegram Login Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        .result-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Telegram Login Test</h1>
+
+    <script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-login="hashland_auth_bot"
+        data-size="small" data-auth-url="hashland-api.up.railway.app" data-request-access="write"></script>
+
+    <!-- For SPA testing -->
+    <script>
+        window.onTelegramAuth = function (user) {
+            console.log('Telegram auth data:', user);
+
+            // Display the raw auth data
+            document.getElementById('auth-data').textContent = JSON.stringify(user, null, 2);
+
+            // Send to backend
+            fetch('https://hashland-api.up.railway.app/auth/telegram/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+                .then(response => {
+                    document.getElementById('status').textContent =
+                        `Status: ${response.status} ${response.statusText}`;
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Login response:', data);
+                    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').textContent = 'Error: ' + error.message;
+                });
+        };
+    </script>
+
+    <div class="result-container">
+        <h2>Auth Data from Telegram:</h2>
+        <pre id="auth-data">Waiting for login...</pre>
+
+        <h2>Response from Backend:</h2>
+        <div id="status">Status: Waiting for response...</div>
+        <pre id="result">Waiting for response...</pre>
+    </div>
+</body>
+
+</html>
