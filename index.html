@@ -68,6 +68,9 @@
                     document.getElementById('result').textContent = 'Error: ' + error.message;
                 });
         };
+        
+        const app = window.Telegram.WebApp;
+        app.ready()
     </script>
 
     <div class="result-container">
